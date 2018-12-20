@@ -10,4 +10,6 @@ public final class Constants {
 
     public static final String MOVIES_SORT_BY_POPULARITY = "popularity.desc";
 
+    public static final String MOVIE_TYPE_TRAILER = "Trailer";
+
 }

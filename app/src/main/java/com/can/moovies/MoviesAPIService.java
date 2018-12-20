@@ -14,6 +14,6 @@ public interface MoviesAPIService {
 
     @GET("movie/{id}/trailers")
     Call<TrailersResponse> getTrailers(
-          @Path("id") String id,
+          @Path("id") int id,
           @Query("api_key") String api_key);
 }

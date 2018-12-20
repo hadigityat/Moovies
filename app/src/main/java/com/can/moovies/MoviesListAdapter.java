@@ -18,7 +18,7 @@ import java.util.List;
 public class MoviesListAdapter extends RecyclerView.Adapter {
 
     Context mContext;
-    MovieListFragment.OnListFragmentInteractionListener mListener;
+    MovieListFragment.OnListFragmentInteractionListener mItemClickListener;
     List<MovieItem> mItems;
     private OnLoadMoreListener mOnLoadMoreListener;
     private int mVisibleThreshold = 50;
@@ -29,7 +29,7 @@ public class MoviesListAdapter extends RecyclerView.Adapter {
     public MoviesListAdapter(Activity activity, List<MovieItem> listItems, RecyclerView recyclerView)
     {
         mContext = activity;
-        mListener = (MovieListFragment.OnListFragmentInteractionListener) activity;
+        mItemClickListener = (MovieListFragment.OnListFragmentInteractionListener) activity;
         mItems = listItems;
 
         if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
@@ -75,12 +75,19 @@ public class MoviesListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         MoviesViewHolder holder = (MoviesViewHolder) viewHolder;
 
-        MovieItem item = mItems.get(i);
-        //Log.e("C_A_N", Constants.IMAGE_BASE_URL + item.getImageURL());
+        final MovieItem item = mItems.get(i);
+
         Picasso.get()
                 .load(Constants.IMAGE_BASE_URL + item.getImageURL())
                 .placeholder(R.drawable.progress_anim)
                 .into(holder.imageView);
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemClickListener.onListItemSelected(item);
+            }
+        });
 
 
     }

@@ -4,9 +4,9 @@ import java.util.List;
 
 public class TrailersResponse {
 
-    private List<TrailerItem> trailers;
+    private List<TrailerItem> youtube;
 
     public List<TrailerItem> getTrailers() {
-        return trailers;
+        return youtube;
     }
 }

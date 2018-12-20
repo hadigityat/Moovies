@@ -7,6 +7,7 @@ import android.os.Bundle;
 public class MainActivity extends AppCompatActivity implements MovieListFragment.OnListFragmentInteractionListener {
 
     MovieListFragment mMovieListFragment;
+    MovieDetailsFragment mMovieDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,10 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
 
     @Override
     public void onListItemSelected(MovieItem item) {
+        mMovieDetailsFragment = MovieDetailsFragment.newInstance(item);
 
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame, mMovieDetailsFragment).addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

@@ -1,11 +1,9 @@
 package com.can.moovies;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +43,7 @@ public class MovieListFragment extends Fragment {
     private int mTotalPages;
     private LinearLayout mErrorLayout;
     private Button mRetryButton;
+    private Retrofit mRetrofit;
 
     private OnListFragmentInteractionListener mListener;
 
@@ -59,7 +58,6 @@ public class MovieListFragment extends Fragment {
      * @param movieListType MovieListType.
      * @return A new instance of fragment MovieListFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MovieListFragment newInstance(MovieListType movieListType) {
         MovieListFragment fragment = new MovieListFragment();
         Bundle args = new Bundle();
@@ -74,17 +72,11 @@ public class MovieListFragment extends Fragment {
         if (getArguments() != null) {
             mMovieListType = (MovieListType) getArguments().getSerializable(MOVIE_LIST_TYPE);
         }
-        Retrofit retrofit = new Retrofit.Builder()
+
+        mRetrofit = new Retrofit.Builder()
                 .baseUrl(Constants.MOVIES_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
-        mService = retrofit.create(MoviesAPIService.class);
-        switch (mMovieListType)
-        {
-            case POPULAR:
-                downloadPopularMovies();
-        }
     }
 
     @Override
@@ -111,7 +103,19 @@ public class MovieListFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         mListView.setLayoutManager(layoutManager);
 
-        //mListView.setAdapter(mAdapter);
+        //Avoid unnecessary layout passes by setting setHasFixedSize to true when changing the
+        // contents of the adapter does not change it's height or the width.
+        mListView.setHasFixedSize(true);
+
+        Log.e("C_A_N", "list on create view, list type: " + mMovieListType );
+
+        mService = mRetrofit.create(MoviesAPIService.class);
+        switch (mMovieListType)
+        {
+            case POPULAR:
+                mPage = 1;
+                downloadPopularMovies();
+        }
 
         return v;
     }
@@ -124,6 +128,7 @@ public class MovieListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
                         MoviesResponse moviesResponse = response.body();
+                        Log.e("C_A_N", "movies response: " + moviesResponse);
 
                         if (moviesResponse != null && moviesResponse.getResults() != null) {
                             if (mPage == 1) {
@@ -156,7 +161,7 @@ public class MovieListFragment extends Fragment {
                     @Override
                     public void onFailure(Call<MoviesResponse> call, Throwable t) {
                         Log.e("MovieListFragment", "onFailure");
-
+                        mProgressBar.setVisibility(View.GONE);
                         showErrorScreen();
                     }
                 });

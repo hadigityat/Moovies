@@ -3,7 +3,9 @@ package com.can.moovies;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MovieItem {
+import java.io.Serializable;
+
+public class MovieItem implements Serializable {
 
     @SerializedName("id")
     @Expose
@@ -16,6 +18,10 @@ public class MovieItem {
     @SerializedName("poster_path")
     @Expose
     private String imageURL;
+
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdrop;
 
     @SerializedName("overview")
     @Expose
@@ -66,6 +72,14 @@ public class MovieItem {
 
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public String getBackdrop() {
+        return backdrop;
+    }
+
+    public void setBackdrop(String backdrop) {
+        this.backdrop = backdrop;
     }
 
 }
