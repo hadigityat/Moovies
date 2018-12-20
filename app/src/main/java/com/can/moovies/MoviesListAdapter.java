@@ -17,9 +17,9 @@ import java.util.List;
 
 public class MoviesListAdapter extends RecyclerView.Adapter {
 
-    Context mContext;
-    MovieListFragment.OnListFragmentInteractionListener mItemClickListener;
-    List<MovieItem> mItems;
+    private Context mContext;
+    private MovieListFragment.OnListFragmentInteractionListener mItemClickListener;
+    private List<MovieItem> mItems;
     private OnLoadMoreListener mOnLoadMoreListener;
     private int mVisibleThreshold = 50;
     private int mLastVisibleItem, mTotalItemCount;
@@ -112,6 +112,18 @@ public class MoviesListAdapter extends RecyclerView.Adapter {
             super(itemView);
             imageView = itemView.findViewById(R.id.movie_image);
         }
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<MovieItem> list) {
+        mItems.addAll(list);
+        notifyDataSetChanged();
     }
 }
 

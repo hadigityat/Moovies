@@ -3,6 +3,7 @@ package com.can.moovies;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,7 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * create an instance of this fragment.
  */
 public class MovieListFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String MOVIE_LIST_TYPE = "type";
 
     private MovieListType mMovieListType;
@@ -44,6 +44,7 @@ public class MovieListFragment extends Fragment {
     private LinearLayout mErrorLayout;
     private Button mRetryButton;
     private Retrofit mRetrofit;
+    private SwipeRefreshLayout mSwipeContainer;
 
     private OnListFragmentInteractionListener mListener;
 
@@ -107,7 +108,15 @@ public class MovieListFragment extends Fragment {
         // contents of the adapter does not change it's height or the width.
         mListView.setHasFixedSize(true);
 
-        Log.e("C_A_N", "list on create view, list type: " + mMovieListType );
+        mSwipeContainer = v.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mErrorLayout.setVisibility(View.GONE);
+                mPage = 1;
+                downloadPopularMovies();
+            }
+        });
 
         mService = mRetrofit.create(MoviesAPIService.class);
         switch (mMovieListType)
@@ -128,7 +137,6 @@ public class MovieListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
                         MoviesResponse moviesResponse = response.body();
-                        Log.e("C_A_N", "movies response: " + moviesResponse);
 
                         if (moviesResponse != null && moviesResponse.getResults() != null) {
                             if (mPage == 1) {
@@ -165,6 +173,11 @@ public class MovieListFragment extends Fragment {
                         showErrorScreen();
                     }
                 });
+        if(mSwipeContainer != null && mSwipeContainer.isRefreshing()) {
+            mAdapter.clear();
+            mAdapter.addAll(mList);
+            mSwipeContainer.setRefreshing(false);
+        }
     }
 
     void showErrorScreen()

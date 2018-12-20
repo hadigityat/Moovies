@@ -5,4 +5,6 @@
     <dimen name="margin_5dp">5dp</dimen>
     <dimen name="text_size_20sp">20sp</dimen>
 
+    <dimen name="backdrop_width">400dp</dimen>
+
 </resources>
